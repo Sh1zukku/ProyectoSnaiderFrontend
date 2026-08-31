@@ -72,7 +72,5 @@ npm run preview
 - `npm run preview` - sirve la build generada
 - `npm run lint` - revisa el código con ESLint
 
-## Nota importante
 
-Este proyecto no usa `requirements.txt` porque es una aplicación frontend de Node.js/Vite. Las dependencias se manejan con `package.json` y `npm install`.
 

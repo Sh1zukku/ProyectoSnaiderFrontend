@@ -37,7 +37,7 @@ export function ThemeToggle() {
               'flex size-7 items-center justify-center rounded-full transition-colors',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               active
-                ? 'bg-brand text-brand-foreground'
+                ? 'bg-red-600 text-white shadow-sm'
                 : 'text-muted-foreground hover:bg-accent hover:text-foreground',
             )}
           >

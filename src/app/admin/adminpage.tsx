@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { CircleAlert, FileJson, FileText, FileUp, LoaderCircle, Send, ShieldCheck, Trash2 } from "lucide-react";
+import { CircleAlert, FileJson, FileText, FileUp, LoaderCircle, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { saveDataAction } from "@/app/admin/action/savedata.action";
 import { FileDropzone } from "@/components/admin/file-dropzone";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatFileSize } from "@/lib/account-generator";
-import { useAuthStore } from "../auth/store/auth.store";
-import { useNavigate } from "react-router";
+
 
 
 
@@ -19,11 +18,11 @@ interface LoadedFile {
 }
 
 export function AdminPage() {
-  const navigate = useNavigate();
+  
   const [mainFile, setMainFile] = useState<LoadedFile | null>(null);
   const [mainError, setMainError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {  logout } = useAuthStore();
+  
 
   const handleMainFile = async (file: File) => {
     setMainError(null);
@@ -36,10 +35,7 @@ export function AdminPage() {
     }
   };
 
-  const handleLogout = async()=>{
-    logout()
-    navigate('/')
-  }
+  
 
   const handleSubmit = async () => {
     if (!mainFile || isSubmitting) return;
@@ -75,85 +71,63 @@ export function AdminPage() {
   })();
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <ShieldCheck className="size-5" />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-foreground">Panel de administrador</h1>
-              <p className="text-sm text-muted-foreground">
-                Carga el archivo principal y genera cuentas de usuario desde un archivo secundario.
-              </p>
-            </div>
-          </div>
-          <Button onClick={handleLogout} variant="outline" size="sm">
-            Cerrar sesión
-          </Button>
-        </div>
-      </header>
+    <main className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <FileUp className="size-4" />
+            Despachos del dia
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <FileDropzone onFileAccepted={handleMainFile} onError={setMainError} />
 
-      <main className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FileUp className="size-4" />
-              Archivo principal
-            </CardTitle>
-            <CardDescription>Sube el archivo principal en formato .txt o .json.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <FileDropzone onFileAccepted={handleMainFile} onError={setMainError} />
+          {mainError && (
+            <p role="alert" className="flex items-start gap-2 text-sm text-destructive">
+              <CircleAlert className="mt-0.5 size-4 shrink-0" />
+              {mainError}
+            </p>
+          )}
 
-            {mainError && (
-              <p role="alert" className="flex items-start gap-2 text-sm text-destructive">
-                <CircleAlert className="mt-0.5 size-4 shrink-0" />
-                {mainError}
-              </p>
-            )}
-
-            {mainFile && (
-              <div className="flex items-start justify-between gap-4 rounded-lg border border-border bg-muted/40 p-4">
-                <div className="flex items-start gap-3">
-                  {isJson ? (
-                    <FileJson className="mt-0.5 size-5 text-primary" />
-                  ) : (
-                    <FileText className="mt-0.5 size-5 text-primary" />
+          {mainFile && (
+            <div className="flex items-start justify-between gap-4 rounded-lg border border-border bg-muted/40 p-4">
+              <div className="flex items-start gap-3">
+                {isJson ? (
+                  <FileJson className="mt-0.5 size-5 text-primary" />
+                ) : (
+                  <FileText className="mt-0.5 size-5 text-primary" />
+                )}
+                <div>
+                  <p className="text-sm font-medium text-foreground">{mainFile.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatFileSize(mainFile.size)} · {isJson ? "JSON" : "Texto plano"}
+                  </p>
+                  {mainPreview && (
+                    <p className="mt-2 max-w-xl truncate text-xs text-muted-foreground">{mainPreview}</p>
                   )}
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{mainFile.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatFileSize(mainFile.size)} · {isJson ? "JSON" : "Texto plano"}
-                    </p>
-                    {mainPreview && (
-                      <p className="mt-2 max-w-xl truncate text-xs text-muted-foreground">{mainPreview}</p>
-                    )}
-                  </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Quitar archivo principal"
-                  onClick={() => setMainFile(null)}
-                >
-                  <Trash2 className="size-4" />
-                </Button>
               </div>
-            )}
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Quitar archivo principal"
+                onClick={() => setMainFile(null)}
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
+          )}
 
-            <Button
-              className="self-end"
-              disabled={!mainFile || isSubmitting}
-              onClick={handleSubmit}
-            >
-              {isSubmitting ? <LoaderCircle className="animate-spin" /> : <Send />}
-              {isSubmitting ? "Enviando..." : "Enviar archivo"}
-            </Button>
-          </CardContent>
-        </Card>
-      </main>
-    </div>
+          <Button
+            className="self-end"
+            disabled={!mainFile || isSubmitting}
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? <LoaderCircle className="animate-spin" /> : <Send />}
+            {isSubmitting ? "Enviando..." : "Enviar archivo"}
+          </Button>
+        </CardContent>
+      </Card>
+    </main>
   );
 }
