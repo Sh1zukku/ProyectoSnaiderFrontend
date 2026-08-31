@@ -23,9 +23,9 @@ const userSchema = z.object({
   dni_cuit: z
     .string()
     .trim()
-    .regex(/^\d+$/, { message: "Solo se permiten dígitos" })
-    .min(8, { message: "El número de cuenta debe tener al menos 8 dígitos" })
-    .max(11, { message: "El número de cuenta debe tener como máximo 11 dígitos" }),
+    .regex(/^(?:\d{8}|\d{11})$/, {
+      message: "El DNI/CUIT debe tener 8 o 11 dígitos",
+    }),
 });
 
 const adminSchema = z.object({
@@ -113,7 +113,7 @@ export function LoginPage() {
                   id="dni_cuit"
                   inputMode="numeric"
                   autoComplete="off"
-                  placeholder="Entre 8 y 11 dígitos"
+                  placeholder="8 o 11 dígitos"
                   maxLength={11}
                   aria-invalid={!!userForm.formState.errors.dni_cuit}
                   {...userForm.register("dni_cuit")}
