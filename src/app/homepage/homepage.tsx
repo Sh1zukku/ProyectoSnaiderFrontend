@@ -1,4 +1,4 @@
-import { ItemsTable } from '@/components/table'
+import { ItemsTable } from '@/components/home/table'
 import CustomFullScreenLoading from '@/components/CustomFullScreenLoading'
 import { getUserAction } from '@/app/auth/actions/getuser.action'
 import { useQuery } from '@tanstack/react-query'
