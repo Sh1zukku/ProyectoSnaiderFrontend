@@ -28,10 +28,10 @@ export default function HomePage() {
           Listado de Pedidos Despachados
         </h1>
         <p className="max-w-xxl text-pretty leading-relaxed text-muted-foreground">
-          Detalle de los pedidos despachados en su nombre registrados por Nro de Remito, Remitente, Nro.Deposito, Bultos, Peso, Valor, Observaciones, Fecha y Hora Recibido 
+          Detalle de los pedidos despachados al DNI/CUIT: {dniCuit} 
         </p>
         <p className="mt-2 font-mono text-xs text-muted-foreground">
-          DNI/CUIT: {dniCuit} · {data?.count ?? 0} registros
+          · {data?.count ?? 0} registros
         </p>
       </div>
 

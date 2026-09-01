@@ -45,6 +45,8 @@ export function AdminPage() {
     try {
       const file = new File([mainFile.content], mainFile.name, { type: "text/plain" });
       await saveDataAction(file);
+      setMainFile(null);
+      setMainError(null);
       toast.success(`Archivo "${mainFile.name}" enviado correctamente.`);
     } catch (error) {
       setMainError(error instanceof Error ? error.message : "No se pudo enviar el archivo.");
