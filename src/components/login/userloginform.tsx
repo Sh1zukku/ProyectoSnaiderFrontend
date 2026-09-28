@@ -5,11 +5,14 @@ import { z } from "zod";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useAuthStore } from "@/app/auth/store/auth.store";
+import { toast } from "sonner";
 
 const userSchema = z
   .object({
     documentType: z.enum(["dni", "cuit"]),
     dni_cuit: z.string().trim(),
+        password: z.string().min(1, { message: "Ingresá tu contraseña" }),
   })
   .superRefine((data, ctx) => {
     const value = data.dni_cuit.replace(/\D/g, "");
@@ -35,10 +38,11 @@ type UserForm = z.infer<typeof userSchema>;
 
 export function UserLoginForm (){
     const navigate = useNavigate();
+    const { loginUser } = useAuthStore();
 
     const userForm = useForm<UserForm>({
         resolver: zodResolver(userSchema),
-        defaultValues: { documentType: "dni", dni_cuit: "" },
+        defaultValues: { documentType: "dni", dni_cuit: "", password: "" },
     });
 
     const selectedDocumentType = userForm.watch("documentType");
@@ -46,7 +50,13 @@ export function UserLoginForm (){
     const placeholder = selectedDocumentType === "dni" ? "8 dígitos" : "11 dígitos";
     
     const onUserSubmit = async (event: UserForm) => {
-        navigate(`/user/${event.dni_cuit}`)
+        const isAuthenticated = await loginUser(event.dni_cuit, event.password);
+        if (isAuthenticated) {
+            navigate(`/user/${event.dni_cuit}`);
+            return;
+        }
+
+        toast.error("Documento o contraseña no válidos");
     };
 
     return(
@@ -127,6 +137,22 @@ export function UserLoginForm (){
                   </p>
                 )}
             </div>
+
+                        <div className="space-y-2">
+                                <Label htmlFor="user-password">Contraseña</Label>
+                                <Input
+                                    id="user-password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    aria-invalid={!!userForm.formState.errors.password}
+                                    {...userForm.register("password")}
+                                />
+                                {userForm.formState.errors.password && (
+                                    <p className="text-sm text-destructive">
+                                        {userForm.formState.errors.password.message}
+                                    </p>
+                                )}
+                        </div>
 
             <Button
                 type="submit"

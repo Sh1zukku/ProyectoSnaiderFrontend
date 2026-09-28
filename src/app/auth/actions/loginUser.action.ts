@@ -1,10 +1,10 @@
 import { snaiderApi } from "@/api/snaiderApi"
 import { type AuthResponse } from '../interfaces/auth.response';
 
-export const loginAction = async(username:string, password: string):Promise<AuthResponse> => {
+export const loginUserAction = async(dni_cuit:string, password: string):Promise<AuthResponse> => {
     try{
-        const {data} = await snaiderApi.post<AuthResponse>('/auth/token/',{
-            username,
+        const {data} = await snaiderApi.post<AuthResponse>('/auth/client/token/',{
+            dni_cuit,
             password
         });
         return data;

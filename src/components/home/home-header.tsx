@@ -1,7 +1,17 @@
 import { ThemeToggle } from '@/components/theme-toggle'
-import { Link } from 'react-router'
+import { useAuthStore } from '@/app/auth/store/auth.store'
+import { Button } from '@/components/ui/button'
+import { useNavigate } from 'react-router'
 
 export function SiteHeader() {
+  const navigate = useNavigate()
+  const logout = useAuthStore((state) => state.logout)
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
+
   return (
     <header className="sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-4">
@@ -22,12 +32,9 @@ export function SiteHeader() {
 
         <nav className="flex items-center gap-3" aria-label="Navegación principal">
           <ThemeToggle />
-          <Link
-            className="inline-flex items-center justify-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            to="/"
-          >
+          <Button variant="outline" onClick={handleLogout}>
             Salir
-          </Link>
+          </Button>
         </nav>
       </div>
     </header>

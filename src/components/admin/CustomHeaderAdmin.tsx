@@ -1,4 +1,5 @@
-import { ShieldCheck } from "lucide-react"
+import { ChevronDown, FileUp, PackageSearch, ShieldCheck, UsersRound } from "lucide-react"
+import { Menu } from "@base-ui/react/menu"
 import { Button } from "../ui/button"
 import { useAuthStore } from "@/app/auth/store/auth.store";
 import { useNavigate } from "react-router";
@@ -16,7 +17,7 @@ export function AdminHeader() {
     return (
 
         <header className="border-b border-border bg-card">
-            <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
+            <div className="flex w-full items-center justify-between px-4 py-4 md:px-6">
                 <div className="flex items-center gap-3">
                     <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
                         <ShieldCheck className="size-5" />
@@ -27,6 +28,39 @@ export function AdminHeader() {
                             Carga de los despachos del dia
                         </p>
                     </div>
+                    <Menu.Root>
+                        <Menu.Trigger render={<Button variant="outline" size="sm" />}>
+                            Secciones
+                            <ChevronDown aria-hidden="true" />
+                        </Menu.Trigger>
+                        <Menu.Portal>
+                            <Menu.Positioner sideOffset={6} align="start">
+                                <Menu.Popup className="min-w-48 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none">
+                                    <Menu.Item
+                                        onClick={() => navigate('/admin')}
+                                        className="flex cursor-default items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
+                                    >
+                                        <FileUp className="size-4" aria-hidden="true" />
+                                        Carga de despachos
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        onClick={() => navigate('/admin/shipments')}
+                                        className="flex cursor-default items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
+                                    >
+                                        <PackageSearch className="size-4" aria-hidden="true" />
+                                        Envíos
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        onClick={() => navigate('/admin/clients')}
+                                        className="flex cursor-default items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
+                                    >
+                                        <UsersRound className="size-4" aria-hidden="true" />
+                                        Clientes
+                                    </Menu.Item>
+                                </Menu.Popup>
+                            </Menu.Positioner>
+                        </Menu.Portal>
+                    </Menu.Root>
                 </div>
                 <div className="flex items-center gap-3">
                     <img
