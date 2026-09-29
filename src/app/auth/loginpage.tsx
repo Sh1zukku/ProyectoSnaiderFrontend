@@ -15,11 +15,19 @@ export function LoginPage() {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">Iniciar sesión</CardTitle>
-        <CardDescription>
-          Elegí el tipo de cuenta para continuar.
-        </CardDescription>
+      <CardHeader className="space-y-4">
+        <img
+          src="/snaider.png"
+          alt="Transporte Snaider"
+          className="h-10 w-auto object-contain"
+        />
+        <div className="space-y-1">
+          <CardTitle className="text-2xl">Iniciar sesión</CardTitle>
+          <CardDescription>
+            Ingresá con tu DNI o CUIT para ver tus envíos, o con tu cuenta de
+            administrador para gestionarlos.
+          </CardDescription>
+        </div>
       </CardHeader>
 
       <CardContent>

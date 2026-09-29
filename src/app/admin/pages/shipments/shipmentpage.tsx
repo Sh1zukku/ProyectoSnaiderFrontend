@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { PackageSearch } from "lucide-react";
+
 import { getShipmentAction } from "@/app/admin/action/getallShipments.action";
 import CustomFullScreenLoading from "@/components/CustomFullScreenLoading";
 import { ItemsTable } from "@/components/home/table";
+import { PageShell, CountLabel } from "@/components/layout/page-shell";
+import { EmptyState, ErrorState } from "@/components/ui/state-panel";
 
 export function ShipmentPage() {
 	const { data, isLoading, isError } = useQuery({
@@ -13,31 +17,20 @@ export function ShipmentPage() {
 	if (isLoading) return <CustomFullScreenLoading />;
 
 	return (
-		<main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-6 py-10">
-			<header className="border-b border-border pb-6">
-				<p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-					Administración
-				</p>
-				<h2 className="mt-2 text-3xl font-semibold text-foreground">Todos los envíos</h2>
-				<p className="mt-2 text-sm text-muted-foreground">
-					{data?.count ?? 0} registros
-				</p>
-			</header>
-
+		<PageShell
+			title="Envíos"
+			description="Todos los despachos registrados en el sistema."
+			meta={<CountLabel count={data?.count ?? 0} noun="registro" />}
+		>
 			{isError ? (
-				<div
-					className="rounded-md border border-destructive/30 bg-destructive/5 p-5 text-sm text-destructive"
-					role="alert"
-				>
-					No se pudieron cargar los envíos. Inténtalo nuevamente.
-				</div>
+				<ErrorState>No pudimos cargar los envíos. Intentalo nuevamente.</ErrorState>
 			) : data?.results.length ? (
 				<ItemsTable items={data.results} />
 			) : (
-				<div className="rounded-md border border-border p-5 text-sm text-muted-foreground">
-					No hay envíos registrados.
-				</div>
+				<EmptyState icon={PackageSearch} title="Sin envíos">
+					Todavía no hay envíos registrados.
+				</EmptyState>
 			)}
-		</main>
+		</PageShell>
 	);
 }

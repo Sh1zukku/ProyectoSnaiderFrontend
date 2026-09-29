@@ -1,10 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { UsersRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { getAllUserAction } from "@/app/admin/action/getAllUserInfo.action";
 import { regenerateClientPasswordAction } from "@/app/admin/action/regenerateClientPassword.action";
 import CustomFullScreenLoading from "@/components/CustomFullScreenLoading";
 import { ClientsTable } from "@/components/admin/clients-table";
+import { PageShell, CountLabel } from "@/components/layout/page-shell";
+import { EmptyState, ErrorState } from "@/components/ui/state-panel";
 
 export function ClientPage() {
 	const queryClient = useQueryClient();
@@ -36,24 +39,13 @@ export function ClientPage() {
 	if (isLoading) return <CustomFullScreenLoading />;
 
 	return (
-		<main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-6 py-10">
-			<header className="border-b border-border pb-6">
-				<p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-					Administración
-				</p>
-				<h2 className="mt-2 text-3xl font-semibold text-foreground">Clientes</h2>
-				<p className="mt-2 text-sm text-muted-foreground">
-					{data?.count ?? 0} clientes registrados
-				</p>
-			</header>
-
+		<PageShell
+			title="Clientes"
+			description="Cuentas habilitadas para consultar envíos. Podés restablecer la contraseña de un cliente cuando sea necesario."
+			meta={<CountLabel count={data?.count ?? 0} noun="cliente" />}
+		>
 			{isError ? (
-				<div
-					className="rounded-md border border-destructive/30 bg-destructive/5 p-5 text-sm text-destructive"
-					role="alert"
-				>
-					No se pudieron cargar los clientes. Inténtalo nuevamente.
-				</div>
+				<ErrorState>No pudimos cargar los clientes. Intentalo nuevamente.</ErrorState>
 			) : data?.results.length ? (
 				<ClientsTable
 					clients={data.results}
@@ -62,10 +54,10 @@ export function ClientPage() {
 					onResetPassword={(clientId) => resetPassword.mutate(clientId)}
 				/>
 			) : (
-				<div className="rounded-md border border-border p-5 text-sm text-muted-foreground">
-					No hay clientes registrados.
-				</div>
+				<EmptyState icon={UsersRound} title="Sin clientes">
+					Todavía no hay clientes registrados.
+				</EmptyState>
 			)}
-		</main>
+		</PageShell>
 	);
 }

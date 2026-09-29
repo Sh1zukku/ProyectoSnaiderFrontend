@@ -49,14 +49,16 @@ export function FileDropzone({ onFileAccepted, onError, compact }: FileDropzoneP
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
       className={cn(
-        "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-muted/40 text-center transition-colors hover:border-primary/50 hover:bg-muted",
-        isDragging && "border-primary bg-accent",
+        "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-muted/40 text-center transition-colors",
+        "hover:border-brand/60 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        isDragging && "border-brand bg-accent",
         compact ? "px-4 py-8" : "px-6 py-12",
       )}
     >
-      <CloudUpload className={cn("text-muted-foreground", compact ? "size-8" : "size-10")} />
+      <CloudUpload className={cn("text-brand", compact ? "size-8" : "size-10")} aria-hidden="true" />
       <p className="text-sm font-medium text-foreground">
-        Arrastra tu archivo aquí o <span className="text-primary underline underline-offset-2">haz clic para elegirlo</span>
+        Arrastra tu archivo aquí o{" "}
+        <span className="underline decoration-brand underline-offset-4">elegilo</span>
       </p>
       <p className="text-xs text-muted-foreground">Formatos aceptados: .txt o .json</p>
       <input

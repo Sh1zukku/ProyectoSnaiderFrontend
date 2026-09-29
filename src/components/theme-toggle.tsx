@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 
 const OPTIONS = [
   { value: 'light', label: 'Claro', Icon: Sun },
@@ -9,13 +9,12 @@ const OPTIONS = [
   { value: 'dark', label: 'Oscuro', Icon: Moon },
 ] as const
 
+const emptySubscribe = () => () => {}
+const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => false)
+
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = useMounted()
 
   return (
     <div
@@ -37,8 +36,8 @@ export function ThemeToggle() {
               'flex size-7 items-center justify-center rounded-full transition-colors',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               active
-                ? 'bg-red-600 text-white shadow-sm'
-                : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                ? 'bg-brand text-brand-foreground shadow-sm'
+                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
             )}
           >
             <Icon className="size-4" aria-hidden="true" />

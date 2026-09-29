@@ -1,5 +1,4 @@
 import { RouterProvider } from 'react-router'
-import './App.css'
 import { appRouter } from './router/app_router'
 import {QueryClient, QueryClientProvider, useQuery} from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -7,6 +6,7 @@ import {Toaster} from 'sonner'
 import type { PropsWithChildren } from 'react'
 import CustomFullScreenLoading from './components/CustomFullScreenLoading'
 import { useAuthStore } from './app/auth/store/auth.store'
+import { ThemeProvider } from './components/theme-provider'
 
 
 const queryClient = new QueryClient
@@ -34,11 +34,13 @@ function SnaiderApp() {
   return (
     (
       <QueryClientProvider client={queryClient}>
-        <Toaster />
-        <CheckAuthProvider>
-          <RouterProvider router={appRouter} />
-        </CheckAuthProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Toaster />
+          <CheckAuthProvider>
+            <RouterProvider router={appRouter} />
+          </CheckAuthProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </ThemeProvider>
       </QueryClientProvider>
 
 

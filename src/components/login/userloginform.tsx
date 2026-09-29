@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
 import { z } from "zod";
@@ -45,7 +45,10 @@ export function UserLoginForm (){
         defaultValues: { documentType: "dni", dni_cuit: "", password: "" },
     });
 
-    const selectedDocumentType = userForm.watch("documentType");
+    const selectedDocumentType = useWatch({
+        control: userForm.control,
+        name: "documentType",
+    });
     const maxLength = selectedDocumentType === "dni" ? 8 : 11;
     const placeholder = selectedDocumentType === "dni" ? "8 dígitos" : "11 dígitos";
     
@@ -67,43 +70,36 @@ export function UserLoginForm (){
         >
             <div className="space-y-2">
                 <Label>Tipo de documento</Label>
-                <div className="inline-flex w-full rounded-full border border-slate-200 bg-slate-100 p-1">
-                    <button
-                        type="button"
-                        onClick={() => {
-                            userForm.setValue("documentType", "dni", {
-                                shouldValidate: userForm.formState.isSubmitted,
-                            });
-                            userForm.setValue("dni_cuit", "", {
-                                shouldValidate: userForm.formState.isSubmitted,
-                            });
-                        }}
-                        className={`flex-1 rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                            selectedDocumentType === "dni"
-                                ? "bg-white text-slate-900 shadow-sm"
-                                : "text-slate-500"
-                        }`}
-                    >
-                        DNI
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            userForm.setValue("documentType", "cuit", {
-                                shouldValidate: userForm.formState.isSubmitted,
-                            });
-                            userForm.setValue("dni_cuit", "", {
-                                shouldValidate: userForm.formState.isSubmitted,
-                            });
-                        }}
-                        className={`flex-1 rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                            selectedDocumentType === "cuit"
-                                ? "bg-white text-slate-900 shadow-sm"
-                                : "text-slate-500"
-                        }`}
-                    >
-                        CUIT
-                    </button>
+                <div
+                    role="group"
+                    aria-label="Tipo de documento"
+                    className="grid w-full grid-cols-2 gap-0.5 rounded-lg border border-border bg-muted p-0.5"
+                >
+                    {(["dni", "cuit"] as const).map((type) => {
+                        const active = selectedDocumentType === type;
+                        return (
+                            <button
+                                key={type}
+                                type="button"
+                                aria-pressed={active}
+                                onClick={() => {
+                                    userForm.setValue("documentType", type, {
+                                        shouldValidate: userForm.formState.isSubmitted,
+                                    });
+                                    userForm.setValue("dni_cuit", "", {
+                                        shouldValidate: userForm.formState.isSubmitted,
+                                    });
+                                }}
+                                className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                                    active
+                                        ? "bg-background text-foreground shadow-sm"
+                                        : "text-muted-foreground hover:text-foreground"
+                                }`}
+                            >
+                                {type.toUpperCase()}
+                            </button>
+                        );
+                    })}
                 </div>
                 {userForm.formState.errors.documentType && (
                     <p className="text-sm text-destructive">

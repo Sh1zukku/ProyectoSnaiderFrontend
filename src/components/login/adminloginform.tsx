@@ -5,7 +5,6 @@ import { z } from "zod";
 import { Label } from "../ui/label";
 import { useAuthStore } from "@/app/auth/store/auth.store";
 import { toast } from "sonner";
-import CustomFullScreenLoading from "../CustomFullScreenLoading";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
@@ -30,29 +29,19 @@ type AdminLoginFormProps = {
 
 export function AdminLoginForm ({ onLoginError }: AdminLoginFormProps) {
     const navigate = useNavigate();
-    const {loginAdmin} = useAuthStore() 
+    const {loginAdmin} = useAuthStore()
 
     const adminForm = useForm<AdminForm>({
         resolver: zodResolver(adminSchema),
         defaultValues: { username: "", password: "" },
     });
 
-    if (adminForm.formState.isSubmitting) {
-        return (
-        <CustomFullScreenLoading
-            title="Iniciando sesión"
-            message="Esperando respuesta del servidor"
-            ariaLabel="Iniciando sesión"
-        />
-        );
-    }
-
     const onAdminSubmit = async (event: AdminForm) => {
         const username = event.username
         const password = event.password
-    
+
         const isCorrect = await loginAdmin(username, password)
-    
+
         if (isCorrect){
             navigate('/admin')
             return

@@ -7,6 +7,6 @@ export const saveDataAction = async (file: File) => {
     try {
         return await snaiderApi.post("/admin/upload-txt/", formData)
     } catch (error) {
-        throw new Error('No se pudo cargar correctamente los datos');
+        throw new Error('No se pudo cargar correctamente los datos', { cause: error });
     }
 }

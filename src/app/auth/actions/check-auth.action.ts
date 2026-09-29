@@ -20,6 +20,6 @@ export const checkAuthAction = async (): Promise<AuthResponse> => {
     console.log(error);
     localStorage.removeItem('token');
     localStorage.removeItem('refresh');
-    throw new Error('Token expired or not valid');
+    throw new Error('Token expired or not valid', { cause: error });
   }
 };

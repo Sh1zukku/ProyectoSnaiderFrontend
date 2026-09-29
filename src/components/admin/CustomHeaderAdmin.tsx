@@ -1,82 +1,69 @@
-import { ChevronDown, FileUp, PackageSearch, ShieldCheck, UsersRound } from "lucide-react"
-import { Menu } from "@base-ui/react/menu"
-import { Button } from "../ui/button"
+import { FileUp, LogOut, PackageSearch, UsersRound } from "lucide-react"
+import { NavLink, useNavigate } from "react-router"
+
 import { useAuthStore } from "@/app/auth/store/auth.store";
-import { useNavigate } from "react-router";
-import { ThemeToggle } from "../theme-toggle";
+import { cn } from "@/lib/utils";
+import { Button } from "../ui/button"
+import { ThemeToggle } from "../theme-toggle"
+
+const SECTIONS = [
+  { to: "/admin", label: "Carga", icon: FileUp, end: true },
+  { to: "/admin/shipments", label: "Envíos", icon: PackageSearch, end: false },
+  { to: "/admin/clients", label: "Clientes", icon: UsersRound, end: false },
+]
 
 export function AdminHeader() {
     const navigate = useNavigate();
-    const {  logout } = useAuthStore();
-    
-    const handleLogout = async()=>{
+    const { logout } = useAuthStore();
+
+    const handleLogout = () => {
         logout()
         navigate('/')
     }
 
     return (
-
-        <header className="border-b border-border bg-card">
-            <div className="flex w-full items-center justify-between px-4 py-4 md:px-6">
-                <div className="flex items-center gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
-                        <ShieldCheck className="size-5" />
-                    </div>
-                    <div>
-                        <h1 className="text-lg font-semibold text-foreground">Panel de administrador</h1>
-                        <p className="text-sm text-muted-foreground">
-                            Carga de los despachos del dia
-                        </p>
-                    </div>
-                    <Menu.Root>
-                        <Menu.Trigger render={<Button variant="outline" size="sm" />}>
-                            Secciones
-                            <ChevronDown aria-hidden="true" />
-                        </Menu.Trigger>
-                        <Menu.Portal>
-                            <Menu.Positioner sideOffset={6} align="start">
-                                <Menu.Popup className="min-w-48 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none">
-                                    <Menu.Item
-                                        onClick={() => navigate('/admin')}
-                                        className="flex cursor-default items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
-                                    >
-                                        <FileUp className="size-4" aria-hidden="true" />
-                                        Carga de despachos
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        onClick={() => navigate('/admin/shipments')}
-                                        className="flex cursor-default items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
-                                    >
-                                        <PackageSearch className="size-4" aria-hidden="true" />
-                                        Envíos
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        onClick={() => navigate('/admin/clients')}
-                                        className="flex cursor-default items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
-                                    >
-                                        <UsersRound className="size-4" aria-hidden="true" />
-                                        Clientes
-                                    </Menu.Item>
-                                </Menu.Popup>
-                            </Menu.Positioner>
-                        </Menu.Portal>
-                    </Menu.Root>
-                </div>
+        <header className="sticky top-0 z-10 border-b border-border bg-background/85 backdrop-blur">
+            <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-6 py-3">
                 <div className="flex items-center gap-3">
                     <img
                         src="/snaider.png"
-                        alt="Logo de Transporte Snaider"
-                        className="h-15 w-60 rounded-md object-cover"
+                        alt="Transporte Snaider"
+                        className="h-9 w-auto object-contain"
                     />
+                    <span className="hidden text-xs font-medium text-muted-foreground sm:inline">
+                        Administración
+                    </span>
                 </div>
-                <div className="flex items-center gap-3">
+
+                <nav
+                    aria-label="Secciones de administración"
+                    className="order-last flex w-full items-center gap-1 sm:order-none sm:w-auto"
+                >
+                    {SECTIONS.map(({ to, label, icon: Icon, end }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            end={end}
+                            className={({ isActive }) =>
+                                cn(
+                                    "inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                                    isActive
+                                        ? "bg-accent text-accent-foreground"
+                                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                                )
+                            }
+                        >
+                            <Icon className="size-4" aria-hidden="true" />
+                            {label}
+                        </NavLink>
+                    ))}
+                </nav>
+
+                <div className="flex items-center gap-2">
                     <ThemeToggle />
-                    <Button
-                        onClick={handleLogout}
-                        variant="outline"
-                        size="default"
-                        className="min-w-[120px] px-4"
-                    >
+                    <Button onClick={handleLogout} variant="outline" size="sm">
+                        <LogOut aria-hidden="true" />
                         Cerrar sesión
                     </Button>
                 </div>
