@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { DataTableCard, Table, THead, Th, TRow, Td } from '@/components/ui/data-table'
+import { DataTableCard, Table, THead, Th, TRow, Td, MobileDetail } from '@/components/ui/data-table'
 import type { Result } from '@/app/auth/interfaces/user.response'
 
 export function ItemsTable({ items }: { items: Result[] }) {
@@ -112,14 +112,5 @@ export function ItemsTable({ items }: { items: Result[] }) {
         })}
       </div>
     </DataTableCard>
-  )
-}
-
-function MobileDetail({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={cn('mt-1 break-words text-foreground', mono && 'font-mono text-xs')}>{value}</p>
-    </div>
   )
 }

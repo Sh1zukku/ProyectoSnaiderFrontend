@@ -58,3 +58,22 @@ export function TRow({ children, className }: { children: ReactNode; className?:
 export function Td({ children, className }: { children: ReactNode; className?: string }) {
   return <td className={cn("px-4 py-3 align-middle", className)}>{children}</td>
 }
+
+export function MobileDetail({
+  label,
+  value,
+  mono,
+  className,
+}: {
+  label: string
+  value: ReactNode
+  mono?: boolean
+  className?: string
+}) {
+  return (
+    <div className={className}>
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className={cn("mt-1 break-words text-foreground", mono && "font-mono text-xs")}>{value}</p>
+    </div>
+  )
+}
