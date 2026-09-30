@@ -7,6 +7,7 @@ import CustomFullScreenLoading from '@/components/CustomFullScreenLoading'
 import { PageShell, CountLabel } from '@/components/layout/page-shell'
 import { EmptyState, ErrorState } from '@/components/ui/state-panel'
 import { getUserAction } from '@/app/auth/actions/getuser.action'
+import { ChangePasswordDialog } from '@/app/homepage/change-password-dialog'
 
 export default function HomePage() {
   const { id: dniCuit } = useParams<{ id: string }>()
@@ -29,6 +30,7 @@ export default function HomePage() {
         </>
       }
       meta={<CountLabel count={data?.count ?? 0} noun="registro" />}
+      actions={<ChangePasswordDialog />}
     >
       {isError ? (
         <ErrorState>
