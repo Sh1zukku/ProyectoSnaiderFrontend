@@ -40,3 +40,10 @@ export const ValueType = {
 } as const;
 
 export type ValueType = typeof ValueType[keyof typeof ValueType];
+
+export interface ManualDeleteResponse {
+    message:       string;
+    days:          number;
+    cutoff:        string;
+    deleted_count: number;
+}

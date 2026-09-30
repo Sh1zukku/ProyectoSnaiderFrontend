@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PackageSearch } from "lucide-react";
 
 import { getShipmentAction } from "@/app/admin/action/getallShipments.action";
+import { DeleteOldShipmentsDialog } from "@/app/admin/pages/shipments/delete-old-shipments-dialog";
 import CustomFullScreenLoading from "@/components/CustomFullScreenLoading";
 import { ItemsTable } from "@/components/home/table";
 import { PageShell, CountLabel } from "@/components/layout/page-shell";
@@ -21,6 +22,7 @@ export function ShipmentPage() {
 			title="Envíos"
 			description="Todos los despachos registrados en el sistema."
 			meta={<CountLabel count={data?.count ?? 0} noun="registro" />}
+			actions={<DeleteOldShipmentsDialog />}
 		>
 			{isError ? (
 				<ErrorState>No pudimos cargar los envíos. Intentalo nuevamente.</ErrorState>
