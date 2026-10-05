@@ -1,32 +1,33 @@
 import { snaiderApi } from "@/api/snaiderApi";
+import { extractApiErrorMessage } from "@/lib/api-error";
+import { todayStamp } from "@/lib/download";
+import type {
+  PasswordFile,
+  RegeneratedPasswordResponse,
+} from "../interface/upload.response";
 
-interface PasswordFile {
-  blob: Blob;
-  filename: string;
-}
+const FALLBACK_ERROR_MESSAGE = "No se pudo restablecer la contraseña.";
 
 export const regenerateClientPasswordAction = async (clientId: number): Promise<PasswordFile> => {
-  const response = await snaiderApi.post<Blob>(
-    `/admin/clients/${clientId}/regenerate-password/`,
-    undefined,
-    { responseType: "blob" },
-  );
-  const disposition = response.headers["content-disposition"] as string | undefined;
-  const encodedFilename = disposition?.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
-  const basicFilename = disposition?.match(/filename="?([^";]+)"?/i)?.[1];
-  let filename = basicFilename;
-  if (encodedFilename) {
-    try {
-      filename = decodeURIComponent(encodedFilename);
-    } catch {
-      filename = encodedFilename;
-    }
+  let data: RegeneratedPasswordResponse;
+
+  try {
+    ({ data } = await snaiderApi.post<RegeneratedPasswordResponse>(
+      `/admin/clients/${clientId}/regenerate-password/`,
+    ));
+  } catch (error) {
+    throw new Error(extractApiErrorMessage(error, FALLBACK_ERROR_MESSAGE), { cause: error });
   }
 
-  if (!filename) filename = `restablecimiento-contrasena-${clientId}.txt`;
+  const content = [
+    `DNI/CUIT: ${data.dni_cuit ?? ""}`,
+    `Nombre: ${data.name ?? ""}`,
+    `Contraseña: ${data.password ?? ""}`,
+    "",
+  ].join("\n");
 
   return {
-    blob: response.data,
-    filename: filename.replace(/[\\/:*?"<>|]/g, "_"),
+    content,
+    filename: `restablecimiento-contrasena-${todayStamp()}.txt`,
   };
 };

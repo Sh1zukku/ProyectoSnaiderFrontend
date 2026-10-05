@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CircleAlert, FileJson, FileText, LoaderCircle, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -8,46 +9,69 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageShell } from "@/components/layout/page-shell";
 import { formatFileSize } from "@/lib/account-generator";
+import { downloadCsvFile, todayStamp } from "@/lib/download";
 
 interface LoadedFile {
   name: string;
   size: number;
   content: string;
+  file: File;
 }
 
 export function AdminPage() {
+  const queryClient = useQueryClient();
   const [mainFile, setMainFile] = useState<LoadedFile | null>(null);
   const [mainError, setMainError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleMainFile = async (file: File) => {
     setMainError(null);
     try {
       const content = await file.text();
-      setMainFile({ name: file.name, size: file.size, content });
+      setMainFile({ name: file.name, size: file.size, content, file });
       toast.success(`Archivo "${file.name}" cargado.`);
     } catch {
       setMainError("No se pudo leer el archivo. Intentalo de nuevo.");
     }
   };
 
-  const handleSubmit = async () => {
-    if (!mainFile || isSubmitting) return;
-
-    setMainError(null);
-    setIsSubmitting(true);
-    try {
-      const file = new File([mainFile.content], mainFile.name, { type: "text/plain" });
-      const fileName = mainFile.name;
-      await saveDataAction(file);
+  const upload = useMutation({
+    mutationFn: saveDataAction,
+    onSuccess: async ({ message, created, skippedDuplicates, errors, newAccounts, credentialsCsv }) => {
       setMainFile(null);
       setMainError(null);
-      toast.success(`Archivo "${fileName}" enviado.`);
-    } catch (error) {
+
+      toast.success(message);
+
+      if (newAccounts.length && credentialsCsv) {
+        downloadCsvFile(credentialsCsv, `credenciales-${todayStamp()}.csv`);
+        toast.success(
+          `${newAccounts.length} ${newAccounts.length === 1 ? "cuenta creada" : "cuentas creadas"}. Se descargó el CSV con las contraseñas.`,
+        );
+      }
+
+      if (skippedDuplicates) {
+        toast.warning(`${skippedDuplicates} ${skippedDuplicates === 1 ? "duplicado omitido" : "duplicados omitidos"}.`);
+      }
+
+      if (errors.length) {
+        toast.warning(
+          `${errors.length} ${errors.length === 1 ? "línea quedó sin procesar" : "líneas quedaron sin procesar"}. Revisá el archivo.`,
+        );
+      }
+
+      if (created || newAccounts.length) {
+        await queryClient.invalidateQueries({ queryKey: ["admin-shipments"] });
+        await queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
+      }
+    },
+    onError: (error) => {
       setMainError(error instanceof Error ? error.message : "No se pudo enviar el archivo.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!mainFile || upload.isPending) return;
+    upload.mutate(mainFile.file);
   };
 
   const isJson = mainFile?.name.toLowerCase().endsWith(".json") ?? false;
@@ -115,11 +139,11 @@ export function AdminPage() {
 
           <Button
             className="self-end"
-            disabled={!mainFile || isSubmitting}
+            disabled={!mainFile || upload.isPending}
             onClick={handleSubmit}
           >
-            {isSubmitting ? <LoaderCircle className="animate-spin" /> : <Send />}
-            {isSubmitting ? "Enviando…" : "Enviar archivo"}
+            {upload.isPending ? <LoaderCircle className="animate-spin" /> : <Send />}
+            {upload.isPending ? "Enviando…" : "Enviar archivo"}
           </Button>
         </CardContent>
       </Card>

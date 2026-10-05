@@ -7,10 +7,12 @@ export function EmptyState({
   icon: Icon,
   title,
   children,
+  action,
 }: {
   icon?: LucideIcon
   title: string
   children?: ReactNode
+  action?: ReactNode
 }) {
   return (
     <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-card/50 px-6 py-14 text-center">
@@ -21,6 +23,7 @@ export function EmptyState({
           <p className="mx-auto max-w-md text-sm text-muted-foreground text-pretty">{children}</p>
         ) : null}
       </div>
+      {action ? <div className="mt-1">{action}</div> : null}
     </div>
   )
 }
