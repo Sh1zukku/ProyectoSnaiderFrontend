@@ -33,7 +33,6 @@ export function ShipmentPage() {
 				shipment.deposit_number,
 				shipment.sender,
 				shipment.recipient?.name,
-				shipment.recipient?.dni_cuit,
 			].some((field) => String(field ?? "").toLowerCase().includes(query)),
 		);
 	}, [shipments, query]);

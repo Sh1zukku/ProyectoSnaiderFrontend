@@ -4,6 +4,7 @@ export interface UserInfo {
 }
 
 export interface Result {
+    id:                number;
     remito_number:     string;
     sender:            string;
     recipient:         Recipient;

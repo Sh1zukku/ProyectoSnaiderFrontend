@@ -6,12 +6,12 @@ import { DataTableCard, Table, THead, Th, TRow, Td, MobileDetail } from '@/compo
 import type { Result } from '@/app/auth/interfaces/user.response'
 
 export function ItemsTable({ items }: { items: Result[] }) {
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({})
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({})
 
-  const toggleRow = (key: string) => {
+  const toggleRow = (id: number) => {
     setExpandedRows((prev) => ({
       ...prev,
-      [key]: !prev[key],
+      [id]: !prev[id],
     }))
   }
 
@@ -32,7 +32,7 @@ export function ItemsTable({ items }: { items: Result[] }) {
           </THead>
           <tbody>
             {items.map((item) => (
-              <TRow key={`${item.remito_number}-${item.deposit_number}`}>
+              <TRow key={item.id}>
                 <Td className="font-mono text-xs text-muted-foreground">{item.remito_number}</Td>
                 <Td className="font-medium text-foreground">{item.sender}</Td>
                 <Td className="text-muted-foreground">{item.recipient.name}</Td>
@@ -52,14 +52,13 @@ export function ItemsTable({ items }: { items: Result[] }) {
 
       <div className="divide-y divide-border md:hidden">
         {items.map((item) => {
-          const rowKey = `${item.remito_number}-${item.deposit_number}`
-          const isExpanded = !!expandedRows[rowKey]
+          const isExpanded = !!expandedRows[item.id]
 
           return (
-            <div key={rowKey} className="bg-card">
+            <div key={item.id} className="bg-card">
               <button
                 type="button"
-                onClick={() => toggleRow(rowKey)}
+                onClick={() => toggleRow(item.id)}
                 aria-expanded={isExpanded}
                 className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40"
               >
